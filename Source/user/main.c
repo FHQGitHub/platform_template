@@ -25,15 +25,17 @@ int main()
 	delay_init(72);
 	uart_init(115200);
 	platform_device_construct_list(&device_list, 0);
-	platform_event_construct_list(&in_event_list, 0);
+	platform_event_construct_list(INIT_EVENT_LIST_ID);
+	platform_event_construct_list(IN_EVENT_LIST_ID);
+	platform_event_construct_list(OUT_EVENT_LIST_ID);
 	s = platform_device_generate_emu_configuration();
 	platform_device_parse_configuration(s);
 
-	new_driver = platform_driver_create("CON1",drv_in, trigger_high, 2, (const char **)match_points);
-	platform_bus_match_devdrv(&device_list, new_driver, &in_event_list);
+	new_driver = platform_driver_create("CON1",drv_in, trigger_high, 1, 2, (const char **)match_points);
+	platform_bus_match_devdrv(&device_list, new_driver, IN_EVENT_LIST_ID);
 	platform_device_print_list(&device_list);
 	
-	platform_event_print_list(&in_event_list);
+	platform_event_print_list(IN_EVENT_LIST_ID);
 	while(1) {
 		
 	}

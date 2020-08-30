@@ -19,12 +19,17 @@ static plat_event_entity_t *platform_bus_generate_event(const plat_device_entity
 	return new_event;
 }
 
-plat_event_entity_t *platform_bus_match_devdrv(const plat_device_list_t *device_list, const plat_driver_entity_t *driver_entity, plat_event_list_t *event_list)
+plat_event_entity_t *platform_bus_match_devdrv(const plat_device_list_t *device_list, const plat_driver_entity_t *driver_entity, int event_list_id)
 {
 	struct list_head *t = NULL;
         plat_device_entity_t *p = NULL;
 	plat_event_entity_t *new_event = NULL;
 	plat_event_entity_t *match_event = NULL;
+	plat_event_list_t *event_list = NULL;
+	
+	event_list = plat_event_get_list_v_id(event_list_id);
+	if(NULL == event_list)
+		return NULL;
 	
 	list_for_each(t, device_list->device_head) {
 		p = list_entry(t, plat_device_entity_t);
@@ -33,7 +38,7 @@ plat_event_entity_t *platform_bus_match_devdrv(const plat_device_list_t *device_
 			if(NULL == match_event) {
 				new_event = platform_bus_generate_event(p, driver_entity);
 				if(NULL != new_event)
-					platform_event_register(&in_event_list, new_event);
+					platform_event_register(IN_EVENT_LIST_ID, new_event);
 				match_event = new_event;
 			}
 			else {

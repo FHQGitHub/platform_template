@@ -1,4 +1,5 @@
 #include "platform_driver.h"
+#include "platform_bus.h"
 
 static void platform_drv_gpio_init(GPIO_TypeDef *GPIO, uint16_t GPIO_Pin, enum plat_driver_direct gpio_direct, enum plat_driver_type gpio_type);
 static uint16_t platform_drv_gpio_read(GPIO_TypeDef *GPIO, uint16_t GPIO_Pin, enum plat_driver_type gpio_type);
@@ -13,6 +14,7 @@ device_operations_t dops = {
 __MUST_FREE plat_driver_entity_t *platform_driver_create(	const char 	*compatible, 			// STORE SET CON
 								enum 		plat_driver_direct drv_direct, 	// SET-out W-in
 								enum plat_driver_type drv_type,			//H L A
+								int 		initial_val,
 								int 		match_points_num,		//the num of con related to this con s-w w-s
 								const char 	**match_points			//which con related to this con
 							)
@@ -25,9 +27,11 @@ __MUST_FREE plat_driver_entity_t *platform_driver_create(	const char 	*compatibl
 	
 	strcpy(new_entity->drv_compatible, compatible);
 	new_entity->drv_direct = drv_direct;
+	new_entity->drv_type = drv_type;
+	new_entity->initial_val = initial_val;
 	new_entity->match_points_num = match_points_num;
 	memcpy(new_entity->match_points, match_points, match_points_num * 20);
-	new_entity->drv_type = drv_type;
+
 	return new_entity;
 }
 

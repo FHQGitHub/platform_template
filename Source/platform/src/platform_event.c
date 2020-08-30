@@ -4,18 +4,31 @@
 static void paltform_event_input_hook(plat_event_entity_t *event_entity);
 static void paltform_event_output_hook(plat_event_entity_t *event_entity);
 
-plat_event_list_t in_event_list;
-plat_event_list_t out_event_list;
+plat_event_list_package_t event_list_package;
 
 case_cell_t test_case_cell = {
 	.match_points_num = 2,
 	.match_points = {1, 2},
 };
 
-static plat_event_entity_t *platform_event_get_entity_v_id(const plat_event_list_t *event_list, int ev_id)
+plat_event_list_t *plat_event_get_list_v_id(int event_list_id)
+{
+	int i;
+	
+	for(i = 0; i < event_list_package.list_num; i++) {
+		if(event_list_package.list_entity[i].ev_list_id == event_list_id)
+			return &(event_list_package.list_entity[i]);
+	}
+	return NULL;
+}
+
+static plat_event_entity_t *platform_event_get_entity_v_id(int event_list_id , int ev_id)
 {
 	struct list_head *t = NULL;
         plat_event_entity_t *p = NULL;
+	plat_event_list_t *event_list = NULL;
+	
+	event_list = plat_event_get_list_v_id(event_list_id);
 	
 	if(!ASSERT_UTILS(event_list))
 		return NULL;
@@ -35,8 +48,7 @@ static void paltform_event_input_set_cells(plat_event_entity_t *event_entity)
         plat_event_entity_t *p = NULL;
 	plat_event_case_t *q = NULL;
 	
-	
-	p = platform_event_get_entity_v_id(&out_event_list, event_entity->ev_id);
+	p = platform_event_get_entity_v_id(OUT_EVENT_LIST_ID, event_entity->ev_id);
 	t = p->ev_case_head;
 	do {
 		list_next(t);
@@ -50,7 +62,6 @@ static void paltform_event_input_set_cells(plat_event_entity_t *event_entity)
 			break;
 		}	
 	}
-	
 }
 
 static void paltform_event_input_hook(plat_event_entity_t *event_entity)
@@ -146,23 +157,30 @@ static void paltform_event_output_hook(plat_event_entity_t *event_entity)
 	}
 }
 
-int platform_event_construct_list(plat_event_list_t *event_list, int list_id)
+int platform_event_construct_list(int event_list_id)
 {
+	plat_event_list_t *event_list = NULL;
+	
 	if(!ASSERT_UTILS(event_list))
 		return -1;
+	
+	event_list = plat_event_get_list_v_id(event_list_id);
+	if(NULL == event_list)
+		return NULL;
+	
 	LIST_CREATE_UTILS(event_list->event_head, event_list);
 	if(!ASSERT_UTILS(event_list->event_head))
 		return -1;
 	list_head_init(event_list->event_head);
-	event_list->ev_list_id = list_id;
+	event_list->ev_list_id = event_list_id;
 	event_list->event_num = 0;
 	
 	return 0;
 }
 
-void platform_event_destruct_list(plat_event_list_t *event_list)
+void platform_event_destruct_list(int event_list_id)
 {
-	
+	plat_event_list_t *event_list = NULL;
 }
 
 int platform_event_add_case(plat_event_entity_t *event_entity, int time_rangeA, int time_rangeB, const case_cell_t *case_cell)
@@ -211,9 +229,15 @@ plat_event_entity_t *platform_event_create()
 	return new_entity;
 }
 
-void platform_event_register(plat_event_list_t *event_list, plat_event_entity_t *new_entity)
+void platform_event_register(int event_list_id, plat_event_entity_t *new_entity)
 {
+	plat_event_list_t *event_list = NULL;
+	
 	if(!ASSERT_UTILS(event_list) || !ASSERT_UTILS(new_entity))
+		return;
+	
+	event_list = plat_event_get_list_v_id(event_list_id);
+	if(NULL == event_list)
 		return;
 	
 	new_entity->ev_id = event_list->event_num;
@@ -231,7 +255,7 @@ plat_event_entity_t *platform_event_get_entity_v_compatible(const plat_event_lis
 {
 	struct list_head *t = NULL;
         plat_event_entity_t *p = NULL;
-	
+
 	if(!ASSERT_UTILS(event_list))
 		return NULL;
 	
@@ -243,14 +267,19 @@ plat_event_entity_t *platform_event_get_entity_v_compatible(const plat_event_lis
 	return NULL;
 }
 
-void platform_event_print_list(const plat_event_list_t *event_list)
+void platform_event_print_list(int event_list_id)
 {
 	int i;
 	struct list_head *t, *s = NULL;
         plat_event_entity_t *p;
 	plat_event_case_t *q = NULL;
+	plat_event_list_t *event_list = NULL;
 	
 	if(!ASSERT_UTILS(event_list))
+		return;
+	
+	event_list = plat_event_get_list_v_id(event_list_id);
+	if(NULL == event_list)
 		return;
 	
 	printf("\r\nevent list id:%d\r\n", event_list->ev_list_id);
@@ -275,15 +304,6 @@ void platform_event_print_list(const plat_event_list_t *event_list)
 				printf("%d ", q->case_cell.match_points[i]);
 			printf("\r\n");
 			printf("\t\t--------------------------------\r\n");
-			for(i = 0; i < q->case_cell.match_points_num; i++) {
-//				switch(q->case_cell.match_points_type[i]) {
-//					case trigger_high: printf("\t\t\t<match point %d type>: trigger-high\r\n", i); break;
-//					case trigger_low: printf("\t\t\t<match point %d type>: trigger-low\r\n", i); break;
-//					case analog: printf("\t\t\t<match point %d type>: analog\r\n", i); break;
-//					default: printf("\t\t\t<match point %d type>: unknown\r\n", i); break;
-//				}
-				
-			}
 			printf("\t\t\t<time range>: <%d:%d>\r\n", q->time_range[0], q->time_range[1]);
 		}
 		printf("\t<event board attribution>:\r\n");
@@ -309,9 +329,14 @@ static void platform_event_handle_entity(plat_event_entity_t *event_entity)
 		paltform_event_output_hook(event_entity);
 }
 
-void platform_event_handle_list(plat_event_list_t *event_list) 
+void platform_event_handle_list(int event_list_id) 
 {
 	struct list_head *t = NULL;
+	plat_event_list_t *event_list = NULL;
+	
+	event_list = plat_event_get_list_v_id(event_list_id);
+	if(NULL == event_list)
+		return;
 	
 	if(!ASSERT_UTILS(event_list))
 		return;
