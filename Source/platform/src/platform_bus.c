@@ -56,20 +56,20 @@ plat_event_entity_t *platform_bus_match_devdrv(const plat_device_list_t *device_
 void platform_bus_probe(	const char 	*compatible, 			// STORE SET CON
 				enum 		plat_driver_direct drv_direct, 	// SET-out W-in
 				enum plat_driver_type drv_type,			//H L A
-				int 		initial_val,
 				int 		time_range[2],
 				int 		match_point_num,		//the num of con related to this con s-w w-s
-				const char 	**match_point_compatibles	//which con related to this con
+				const char 	**match_point_compatibles,	//which con related to this con
+				int 		extra_val
 			  )
 {
 	int i;
-	plat_driver_entity_t *driver_entity = platform_driver_create(compatible, drv_direct, drv_type, initial_val, match_point_num, match_point_compatibles);
+	plat_driver_entity_t *driver_entity = platform_driver_create(compatible, drv_direct, drv_type, extra_val, match_point_num, match_point_compatibles);
 	plat_event_entity_t *event_entity = NULL;
 	case_cell_t case_cell;
 	
 	if(NULL == driver_entity)
 		return;
-	if(initial_val != 0)
+	if(extra_val != 0)
 		platform_bus_match_devdrv(&device_list, driver_entity, INIT_EVENT_LIST_ID);
 	else {
 		if(drv_in == drv_direct) 
@@ -79,7 +79,7 @@ void platform_bus_probe(	const char 	*compatible, 			// STORE SET CON
 		else;
 	}
 	memset(&case_cell, 0, sizeof(case_cell_t));
-	case_cell.match_points_num = match_point_num;
+	case_cell.match_point_num = match_point_num;
 	for(i = 0; i < match_point_num; i++)
 		case_cell.match_points[i] = (platform_device_get_entity_v_compatible(&device_list, match_point_compatibles[i]))->dev_id;
 	platform_event_add_case(event_entity, time_range[0], time_range[1], &case_cell);

@@ -15,7 +15,7 @@
 #define EVENT_CREATE_UTILS(name, type)    type *name = util_alloc(1, type)
 
 typedef struct {
-	uint16_t match_points_num;
+	uint16_t match_point_num;
 	uint16_t match_points[10];
 }case_cell_t;
 

@@ -7,7 +7,7 @@ static void paltform_event_output_hook(plat_event_entity_t *event_entity);
 plat_event_list_package_t event_list_package;
 
 case_cell_t test_case_cell = {
-	.match_points_num = 2,
+	.match_point_num = 2,
 	.match_points = {1, 2},
 };
 
@@ -103,7 +103,7 @@ static void paltform_event_output_hook(plat_event_entity_t *event_entity)
 	}while(i < event_entity->ev_case_stage);
 	
 	q = list_entry(t, plat_event_case_t);
-	for(i = 0; i < event_entity->ev_case_num; i++) {
+	for(i = 0; i < q->case_cell.match_point_num; i++) {
 		if(0 == (q->case_cell.match_points[i] & 0x8000)) {
 			stage_status = -1;
 			break;
@@ -200,7 +200,7 @@ int platform_event_add_case(plat_event_entity_t *event_entity, int time_rangeA, 
 	new_case->time_range[0] = time_rangeA;
 	new_case->time_range[0] = time_rangeB;
 	new_case->case_id = event_entity->ev_case_num;
-	++event_entity->ev_case_num;
+	++(event_entity->ev_case_num);
 	memcpy(&new_case->case_cell, case_cell, sizeof(case_cell_t));
 	
 	list_add_tail(new_case->case_entry, event_entity->ev_case_head);
@@ -298,9 +298,9 @@ void platform_event_print_list(int event_list_id)
 			q = list_entry(s, plat_event_case_t);
 			printf("\t<case %d>:\r\n", q->case_id);
 			printf("\t----------------------------------------\r\n");
-			printf("\t\t<case match point number>:%d\r\n", q->case_cell.match_points_num);
+			printf("\t\t<case match point number>:%d\r\n", q->case_cell.match_point_num);
 			printf("\t\t<match points>: ");
-			for(i = 0; i < q->case_cell.match_points_num; i++)
+			for(i = 0; i < q->case_cell.match_point_num; i++)
 				printf("%d ", q->case_cell.match_points[i]);
 			printf("\r\n");
 			printf("\t\t--------------------------------\r\n");
