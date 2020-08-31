@@ -6,6 +6,12 @@
 
 #define platform_debug(fmt, args...)	printf("platform>: " fmt, ##args)
 
-plat_event_entity_t *platform_bus_match_devdrv(const plat_device_list_t *device_list, const plat_driver_entity_t *driver_entity, int event_list_id);
-
+void platform_bus_probe(	const char 	*compatible, 			// STORE SET CON
+				enum 		plat_driver_direct drv_direct, 	// SET-out W-in
+				enum plat_driver_type drv_type,			//H L A
+				int 		initial_val,
+				int 		time_range[2],
+				int 		match_point_num,		//the num of con related to this con s-w w-s
+				const char 	**match_point_compatibles	//which con related to this con
+			  );
 #endif

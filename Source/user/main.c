@@ -32,7 +32,6 @@ int main()
 	platform_device_parse_configuration(s);
 
 	new_driver = platform_driver_create("CON1",drv_in, trigger_high, 1, 2, (const char **)match_points);
-	platform_bus_match_devdrv(&device_list, new_driver, IN_EVENT_LIST_ID);
 	platform_device_print_list(&device_list);
 	
 	platform_event_print_list(IN_EVENT_LIST_ID);

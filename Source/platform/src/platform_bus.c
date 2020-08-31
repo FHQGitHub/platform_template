@@ -83,4 +83,5 @@ void platform_bus_probe(	const char 	*compatible, 			// STORE SET CON
 	for(i = 0; i < match_point_num; i++)
 		case_cell.match_points[i] = (platform_device_get_entity_v_compatible(&device_list, match_point_compatibles[i]))->dev_id;
 	platform_event_add_case(event_entity, time_range[0], time_range[1], &case_cell);
+	util_free(driver_entity);
 }
