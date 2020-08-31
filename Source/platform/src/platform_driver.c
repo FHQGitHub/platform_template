@@ -15,8 +15,8 @@ __MUST_FREE plat_driver_entity_t *platform_driver_create(	const char 	*compatibl
 								enum 		plat_driver_direct drv_direct, 	// SET-out W-in
 								enum plat_driver_type drv_type,			//H L A
 								int 		initial_val,
-								int 		match_points_num,		//the num of con related to this con s-w w-s
-								const char 	**match_points			//which con related to this con
+								int 		match_point_num,		//the num of con related to this con s-w w-s
+								const char 	**match_point_compatibles	//which con related to this con
 							)
 {
 	DRIVER_CREATE_UTILS(new_entity, plat_driver_entity_t);
@@ -29,11 +29,12 @@ __MUST_FREE plat_driver_entity_t *platform_driver_create(	const char 	*compatibl
 	new_entity->drv_direct = drv_direct;
 	new_entity->drv_type = drv_type;
 	new_entity->initial_val = initial_val;
-	new_entity->match_points_num = match_points_num;
-	memcpy(new_entity->match_points, match_points, match_points_num * 20);
-
+	new_entity->match_point_num = match_point_num;
+	memcpy(new_entity->match_point_compatibles, match_point_compatibles, match_point_num * 20);
+	
 	return new_entity;
 }
+
 
 static void platform_drv_gpio_init(GPIO_TypeDef *GPIO, uint16_t GPIO_Pin, enum plat_driver_direct gpio_direct, enum plat_driver_type gpio_type)
 {

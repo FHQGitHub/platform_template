@@ -288,7 +288,7 @@ void platform_event_print_list(int event_list_id)
 		printf("------------------------------------------------\r\n");
 		p = list_entry(t, plat_event_entity_t);
 		printf("\t<event id>:%d\r\n", p->ev_id);
-		printf("\t<event match list id>:%d\r\n", p->ev_match_list);
+		printf("\t<event match list id>:%d\r\n", p->ev_match_list_id);
 		if(p->ev_direct == drv_in)
 			printf("\t<event direct>:input\r\n");
 		else if(p->ev_direct == drv_out)

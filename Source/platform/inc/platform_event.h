@@ -29,7 +29,7 @@ typedef struct {
 typedef struct event_entity{
 	char ev_compatible[20];  		//store name £ºconx 
 	int ev_id;            			//id for conx 
-	int ev_match_list;   			//match other list in--out
+	int ev_match_list_id;   		//match other list in--out
 	int ev_case_num;
 	int ev_case_stage;
 	enum plat_driver_direct ev_direct;   	// in out
@@ -57,6 +57,7 @@ int platform_event_construct_list(int event_list_id);
 plat_event_entity_t *platform_event_create(void);
 void platform_event_register(int event_list_id, plat_event_entity_t *new_entity);
 plat_event_entity_t *platform_event_get_entity_v_compatible(const plat_event_list_t *event_list, const char *ev_compatible);
+int platform_event_add_case(plat_event_entity_t *event_entity, int time_rangeA, int time_rangeB, const case_cell_t *case_cell);
 void platform_event_print_list(int event_list_id);
 void platform_event_handle_list(int event_list_id);
 
