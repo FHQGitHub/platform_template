@@ -6,6 +6,6 @@
 
 #define platform_debug(fmt, args...)	printf("platform>: " fmt, ##args)
 
-plat_event_entity_t *platform_bus_match_devdrv(const plat_device_list_t *device_list, const plat_driver_entity_t *driver_entity, plat_event_list_t *event_list);
+plat_event_entity_t *platform_bus_match_devdrv(const plat_device_list_t *device_list, const plat_driver_entity_t *driver_entity, int event_list_id);
 
 #endif

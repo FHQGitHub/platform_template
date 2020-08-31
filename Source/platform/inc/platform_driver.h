@@ -22,8 +22,9 @@ typedef struct {
 	char drv_compatible[20];  //store name £ºconx 
 	enum plat_driver_direct drv_direct;   // in out
 	enum plat_driver_type drv_type;
-	int match_points_num;
-	char match_points[10][20];
+	int initial_val;
+	int match_point_num;
+	char match_point_compatibles[10][20];
 }plat_driver_entity_t;
 
 typedef struct {
@@ -36,9 +37,10 @@ extern device_operations_t dops;
 
 __MUST_FREE plat_driver_entity_t *platform_driver_create(	const char 	*compatible, 			// STORE SET CON
 								enum 		plat_driver_direct drv_direct, 	// SET-out W-in
-								enum plat_driver_type drv_type,			
-								int 		match_points_num,
-								const char 	**match_points
+								enum plat_driver_type drv_type,			//H L A
+								int 		initial_val,
+								int 		match_point_num,		//the num of con related to this con s-w w-s
+								const char 	**match_point_compatibles	//which con related to this con
 							);
 
 #endif
