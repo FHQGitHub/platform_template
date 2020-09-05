@@ -1,41 +1,50 @@
-#include "platform_bus.h"
 #include "sys.h"
 #include "delay.h"
 #include "usart.h"
+#include "bsp_timer.h"
+#include "drv_uart.h"
+#include "drv_delay.h"
+#include "drv_spi.h"
+#include "drv_SI446x.h"
+#include "platform_event.h"
+#include "platform_bus.h"
+#include "message_process.h"
+#include "state_process.h"
+#include "kshell.h"
 
-char *s;
-char match_points[2][20] = {"CON1", "CON2"};
-enum plat_driver_type match_point_type[2] = {trigger_high, trigger_low};
+char s[3][100] = {
+			"W 'SWT1'H ,S 'LED4'H.",
+//			"W 'SWT2'H ,S 'LED1'L."
+			"O"
+		};
 
-const plat_device_entity_t new_device = {
-	.dev_compatible = "COM1",
-	.dev_id = 0,
-	.dev_board_attr = {
-		.GPIO = GPIOA,
-		.GPIO_Pin = 1
-	},
-	.dev_entry = NULL
-};
-
-plat_driver_entity_t *new_driver;
 
 int main()
 {
+	int i = 0;
 	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_4); 
-	delay_init(72);
+	drv_delay_init();
 	uart_init(115200);
-	platform_device_construct_list(&device_list, 0);
+	timer3_init(7199, 999);
+	drv_spi_init();
+	SI446x_Init();
+	device_list = platform_device_construct_list(0);
+	kobject_list = platform_kobject_construct_list(0);
 	platform_event_construct_list(INIT_EVENT_LIST_ID);
 	platform_event_construct_list(IN_EVENT_LIST_ID);
 	platform_event_construct_list(OUT_EVENT_LIST_ID);
-	s = platform_device_generate_emu_configuration();
-	platform_device_parse_configuration(s);
-
-	new_driver = platform_driver_create("CON1",drv_in, trigger_high, 1, 2, (const char **)match_points);
-	platform_device_print_list(&device_list);
 	
-	platform_event_print_list(IN_EVENT_LIST_ID);
+	TIM_Cmd(TIM3, ENABLE); 	
 	while(1) {
-		
+		if(init_flag) {
+			platform_event_handle_hw_status();
+			platform_event_handle_list(IN_EVENT_LIST_ID);
+			platform_event_handle_list(OUT_EVENT_LIST_ID);
+		}
+		if(USART_RX_STA & 0x8000) {
+			exec((char *)USART_RX_BUF);
+			memset(USART_RX_BUF, 0, 2000);
+			USART_RX_STA = 0;	
+		}
 	}
 }

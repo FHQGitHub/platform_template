@@ -1,5 +1,7 @@
 #include "bsp_timer.h"
 #include "usart.h"
+#include "platform_event.h"
+#include "platform_bus.h"
 
 int cnt_ms;
 
@@ -23,8 +25,7 @@ void timer2_init(u16 arr, u16 psc)
 	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
 	NVIC_Init(&NVIC_InitStructure);
 
-	TIM_Cmd(TIM2, DISABLE);
-							 
+	TIM_Cmd(TIM2, DISABLE);					 
 }
 
 void timer3_init(u16 arr, u16 psc)
@@ -54,8 +55,9 @@ void TIM3_IRQHandler(void)
 {
 	if (TIM_GetITStatus(TIM3, TIM_IT_Update) != RESET) {
 		TIM_ClearITPendingBit(TIM3, TIM_IT_Update); 
-		++cnt_ms;
-		
+		if(init_flag) {
+			platform_kobject_get_hw_status(kobject_list);
+		}
 	}
 }
 

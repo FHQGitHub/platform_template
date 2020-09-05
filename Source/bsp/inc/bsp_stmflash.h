@@ -1,6 +1,6 @@
 #ifndef __BSP_STMFLASH_H__
 #define __BSP_STMFLASH_H__
-#include "stm32f4xx.h"	
+#include "stm32f10x.h"	
 
 
 //FLASHÆðÊ¼µØÖ·

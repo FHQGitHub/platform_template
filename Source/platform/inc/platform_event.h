@@ -2,9 +2,8 @@
 #define __PLATFORM_EVENT_H
 
 #include "list_utils.h"
-#include "stm32f4xx.h"
-#include "platform_device.h"
-#include "platform_driver.h"
+#include "stm32f10x.h"
+#include "platform_kobject.h"
 
 #define MAX_EVENT_LIST_NUM	3
 
@@ -15,8 +14,9 @@
 #define EVENT_CREATE_UTILS(name, type)    type *name = util_alloc(1, type)
 
 typedef struct {
-	uint16_t match_point_num;
-	uint16_t match_points[10];
+	uint16_t 	match_point_num;
+	uint16_t 	match_points[10];
+	char 		**match_point_compatible;
 }case_cell_t;
 
 typedef struct {
@@ -31,10 +31,9 @@ typedef struct event_entity{
 	int ev_id;            			//id for conx 
 	int ev_match_list_id;   		//match other list in--out
 	int ev_case_num;
-	int ev_case_stage;
-	enum plat_driver_direct ev_direct;   	// in out
-	enum plat_driver_type ev_type;
-	plat_device_attr_t ev_board_attr;    	//GPIOX Pinx
+	
+	kobject_kernel_t *kobj_kernel;
+
 	struct list_head *ev_entry;
 	struct list_head *ev_case_head;
 }plat_event_entity_t;
@@ -47,7 +46,7 @@ typedef struct {
 
 typedef struct {
 	int list_num;
-	plat_event_list_t list_entity[MAX_EVENT_LIST_NUM];
+	plat_event_list_t *list_entity[MAX_EVENT_LIST_NUM];
 }plat_event_list_package_t;
 	
 extern plat_event_list_package_t event_list_package;
@@ -55,9 +54,11 @@ extern plat_event_list_package_t event_list_package;
 plat_event_list_t *plat_event_get_list_v_id(int event_list_id);
 int platform_event_construct_list(int event_list_id);
 plat_event_entity_t *platform_event_create(void);
+void platform_event_destroy(plat_event_entity_t *event_entity);
 void platform_event_register(int event_list_id, plat_event_entity_t *new_entity);
 plat_event_entity_t *platform_event_get_entity_v_compatible(const plat_event_list_t *event_list, const char *ev_compatible);
 int platform_event_add_case(plat_event_entity_t *event_entity, int time_rangeA, int time_rangeB, const case_cell_t *case_cell);
+void platform_event_handle_hw_status(void);
 void platform_event_print_list(int event_list_id);
 void platform_event_handle_list(int event_list_id);
 

@@ -14,6 +14,8 @@
 //All rights reserved
 ////////////////////////////////////////////////////////////////////////////////// 	  
 
+extern int cnt_ms;
+
 void timer2_init(u16 arr,u16 psc); 
 void timer3_init(u16 arr,u16 psc);
 

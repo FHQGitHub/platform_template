@@ -17,6 +17,8 @@ typedef  unsigned char 	uint8_t;
 typedef  unsigned int  	uint32_t;
 
 #define __MUST_FREE		
+
+#define CREATE_UTILS(name, type)    	type *name = util_alloc(1, type)
 #define ASSERT_UTILS(ptr)       	(ptr != NULL)
 
 #define util_mem_init()			my_mem_init(0)
