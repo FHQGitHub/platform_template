@@ -12,13 +12,6 @@
 #include "state_process.h"
 #include "kshell.h"
 
-char s[3][100] = {
-			"W 'SWT1'H ,S 'LED4'H.",
-//			"W 'SWT2'H ,S 'LED1'L."
-			"O"
-		};
-
-
 int main()
 {
 	int i = 0;

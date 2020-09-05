@@ -148,10 +148,10 @@ static void platform_driver_import_handler(const char *message)
 	}
 }
 
-static void platform_checkclean_handler(const char *message)
+static void platform_confirm_clean_handler(const char *message)
 {
 	if(!(strcmp(message, "yes"))) {
-		__kshell_debug("clean done.");
+		__kshell_debug("clean done, please restart.");
 		terminal_handler = NULL;
 	}
 	else if(!(strcmp(message, "no"))) {
@@ -194,5 +194,5 @@ static void __kshell_ls(const char *ls_option)
 static void __kshell_clean()
 {
 	__kshell_debug("clean all infomation? [yes/no].");
-	terminal_handler = platform_checkclean_handler;
+	terminal_handler = platform_confirm_clean_handler;
 }
